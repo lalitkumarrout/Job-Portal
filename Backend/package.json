@@ -5,7 +5,15 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lalitkumarrout/Job-Portal.git"
+  },
   "author": "",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lalitkumarrout/Job-Portal/issues"
+  },
+  "homepage": "https://github.com/lalitkumarrout/Job-Portal#readme",
   "description": ""
 }
