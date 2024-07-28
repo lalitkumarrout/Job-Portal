@@ -75,12 +75,11 @@ export const login = async (req, res) => {
     user = {
       _id: user._id,
       fullname: user.fullname,
-      email: user,
-      email,
+      email: user.email,
       phoneNumber: user.phoneNumber,
       role: user.role,
-      profile: user.profile,
-    };
+      profile: user.profile
+  }
     return res
       .status(200)
       .cookie("token", token, {
@@ -111,58 +110,69 @@ export const logout=async (req,res)=>{
     }
 }
 
-export const updateProfile=async (req,res)=>{
-    try{
-        const {fullname,email,phoneNumber,bio,skills}=req.body;
-        const file=req.file;
-        if(!fullname ||!email ||!phoneNumber ||!bio ||!skills){
-            return res.status(400).json({
-                message:"Something is missing",
-                success:false
-            });
-        }
-        //clodinary ayega idhar
+// export const logout = async (req, res) => {
+//   try {
+//       return res.status(200).cookie("token", "", { maxAge: 0 }).json({
+//           message: "Logged out successfully.",
+//           success: true
+//       })
+//   } catch (error) {
+//       console.log(error);
+//   }
+// }
 
-        const skillsArray=skills.split(",");
-        const userId=req.id; //middware authentication
-        let user=await user.findById(userId);
 
-        if(!user){
-            return res.status(400).json({
-                message:"user not found",
-                success:false,
-            })
-        }
-        //updating data
-        user.fullname=fullname,
-        user.email=email,
-        user.phoneNumber=phoneNumber,
-        user.profile.bio=bio,
-        user.profile.skills=skillsArray
+export const updateProfile = async (req, res) => {
+  try {
+      const { fullname, email, phoneNumber, bio, skills } = req.body;
+      
+      const file = req.file;
+      // cloudinary ayega idhar
+     
 
-        //resume comes later here
 
-        await user.save();
 
-        user = {
-            _id: user._id,
-            fullname: user.fullname,
-            email: user,
-            email,
-            phoneNumber: user.phoneNumber,
-            role: user.role,
-            profile: user.profile,
-          };
+      let skillsArray;
+      if(skills){
+          skillsArray = skills.split(",");
+      }
+      const userId = req.id; // middleware authentication
+      let user = await User.findById(userId);
 
-          return res.status(200).json({
-            message:'profile updated successfully',
-            user,
-            success:true
+      if (!user) {
+          return res.status(400).json({
+              message: "User not found.",
+              success: false
           })
-            
+      }
+      // updating data
+      if(fullname) user.fullname = fullname
+      if(email) user.email = email
+      if(phoneNumber)  user.phoneNumber = phoneNumber
+      if(bio) user.profile.bio = bio
+      if(skills) user.profile.skills = skillsArray
+    
+      // resume comes later here...
+    
 
-    }
-    catch(error){
 
-    }
+      await user.save();
+
+      user = {
+          _id: user._id,
+          fullname: user.fullname,
+          email: user.email,
+          phoneNumber: user.phoneNumber,
+          role: user.role,
+          profile: user.profile
+      }
+
+      return res.status(200).json({
+          message:"Profile updated successfully.",
+          user,
+          success:true
+      })
+  } catch (error) {
+      console.log(error);
+  }
 }
