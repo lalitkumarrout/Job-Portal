@@ -1,36 +1,100 @@
 import React from "react";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
+import { useParams } from "react-router-dom";
+import { JOB_API_END_POINT } from "@/utils/constant";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setsingleJob } from "@/redux/jobSlice";
+import axios from "axios";
+import { useState } from "react";
+import { toast } from "sonner";
+import { APPLICATION_API_END_POINT } from "@/utils/constant";
 
 const JobDescription = () => {
-  const isapplied = true;
+  const { singleJob } = useSelector((store) => store.job);
+  const { user } = useSelector((store) => store.auth);
+  const isIntiallyApplied =
+    singleJob?.applications?.some(
+      (application) => application.applicant == user?._id
+    ) || false;
+  const [isApplied, setIsApplied] = useState(isIntiallyApplied);
+
+  const params = useParams();
+  const jobId = params.id;
+  const dispatch = useDispatch();
+
+  const applyJobHandler = async () => {
+    try {
+      const res = await axios.get(
+        `${APPLICATION_API_END_POINT}/apply/${jobId}`,
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        setIsApplied(true); // Update the local state
+        const updatedSingleJob = {
+          ...singleJob,
+          applications: [...singleJob.applications, { applicant: user?._id }],
+        };
+        dispatch(setsingleJob(updatedSingleJob)); // helps us to real time UI update
+        toast.success(res.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response.data.message);
+    }
+  };
+  useEffect(() => {
+    const fetchSingleJobs = async () => {
+      try {
+        const res = await axios.get(`${JOB_API_END_POINT}/get/${jobId}`, {
+          withCredentials: true,
+        });
+        console.log(res);
+        if (res.data.success) {
+          dispatch(setsingleJob(res.data.job));
+          setIsApplied(
+            res.data.job.applications.some(
+              (application) => application.applicant === user?._id
+            )
+          ); // Ensure the state is in sync with fetched data
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchSingleJobs();
+  }, [jobId, dispatch, user?._id]);
+
   return (
     <div className="max-w-7xl mx-auto my-10">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-bold text-xl ">Frontend Developer</h1>
+          <h1 className="font-bold text-xl ">{singleJob?.title}</h1>
           <div className="flex items-center gap-2 mt-4 ">
             <Badge className="text-blue-700 font-bold " variant="ghost">
-              12 Positions
+              {singleJob?.position} Positions
             </Badge>
             <Badge className="text-[#F83002]" variant="ghost">
-              Part Time
+              {singleJob?.jobType}
             </Badge>
             <Badge className="text-[#7209b7]" variant="ghost">
-              24 Lpa
+              {singleJob?.salary} Lpa
             </Badge>
           </div>
         </div>
 
         <Button
-          disabled={isapplied}
+          onClick={isApplied ? null : applyJobHandler}
+          disabled={isApplied}
           className={`rounded-lg ${
-            isapplied
+            isApplied
               ? "bg-gray-600 cursor-not-allowed"
               : "bg-[#7209b7] hover:bg-[#5f32ad]"
           }`}
         >
-          {isapplied ? "Already Applied" : "Apply Now "}
+          {isApplied ? "Already Applied" : "Apply Now "}
         </Button>
       </div>
       <h1 className="border-b-2 border-b-gray-300 font-medium py-4">
@@ -40,41 +104,41 @@ const JobDescription = () => {
         <h1 className="font-bold my-1">
           Role:
           <span className="pl-4 font-normal text-gray-800">
-            Frontend Developer
+            {singleJob?.title}
           </span>
         </h1>
         <h1 className="font-bold my-1">
-          Location:
+          {singleJob?.location}
           <span className="pl-4 font-normal text-gray-800">Bhubaneswar</span>
         </h1>
         <h1 className="font-bold my-1">
           Description:
           <span className="pl-4 font-normal text-gray-800">
-            Lorem ipsum dolor sit amet.
+            {singleJob?.description}
           </span>
         </h1>
         <h1 className="font-bold my-1">
-         Experience
+          Experience
           <span className="pl-4 font-normal text-gray-800">
-            2 years
+            {singleJob?.experienceLevel}
           </span>
         </h1>
         <h1 className="font-bold my-1">
           Salary:
           <span className="pl-4 font-normal text-gray-800">
-           12Lpa
+            {singleJob?.salary} Lpa
           </span>
         </h1>
         <h1 className="font-bold my-1">
-         Total Applicants:
+          Total Applicants:
           <span className="pl-4 font-normal text-gray-800">
-           4
+            {singleJob?.applications?.length}
           </span>
         </h1>
         <h1 className="font-bold my-1">
-         Posted Date:
+          Posted Date:
           <span className="pl-4 font-normal text-gray-800">
-        29-08-2024
+            {singleJob?.createdAt?.split("T")[0]}
           </span>
         </h1>
       </div>

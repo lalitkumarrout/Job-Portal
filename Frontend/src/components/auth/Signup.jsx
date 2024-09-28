@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import axios from 'axios'
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "@/redux/authSlice";
+import { Loader2 } from "lucide-react";
 
 const Signup = () => {
   const [input, setInput] = useState({
@@ -151,7 +152,7 @@ const { loading } = useSelector((store) => store.auth);
           </div>
           {loading ? (
             <Button className='w-full my-4'>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2  className="mr-2 h-4 w-4 animate-spin" />
               Please wait
             </Button>
           ) : (
