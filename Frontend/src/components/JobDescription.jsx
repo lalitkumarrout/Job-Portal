@@ -5,14 +5,15 @@ import { useParams } from "react-router-dom";
 import { JOB_API_END_POINT } from "@/utils/constant";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setsingleJob } from "@/redux/jobSlice";
+import { setSingleJob } from "@/redux/jobSlice";
+
 import axios from "axios";
 import { useState } from "react";
 import { toast } from "sonner";
 import { APPLICATION_API_END_POINT } from "@/utils/constant";
 
 const JobDescription = () => {
-  const { singleJob } = useSelector((store) => store.job);
+  const { singleJob } = useSelector((store) => store.job); 
   const { user } = useSelector((store) => store.auth);
   const isIntiallyApplied =
     singleJob?.applications?.some(
@@ -37,7 +38,7 @@ const JobDescription = () => {
           ...singleJob,
           applications: [...singleJob.applications, { applicant: user?._id }],
         };
-        dispatch(setsingleJob(updatedSingleJob)); // helps us to real time UI update
+        dispatch(setSingleJob(updatedSingleJob)); // helps us to real time UI update
         toast.success(res.data.message);
       }
     } catch (error) {
@@ -53,7 +54,7 @@ const JobDescription = () => {
         });
         console.log(res);
         if (res.data.success) {
-          dispatch(setsingleJob(res.data.job));
+          dispatch(setSingleJob(res.data.job));
           setIsApplied(
             res.data.job.applications.some(
               (application) => application.applicant === user?._id
