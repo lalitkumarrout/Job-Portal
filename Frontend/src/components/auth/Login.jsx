@@ -11,6 +11,7 @@ import { USER_API_END_POINT } from "@/utils/constant";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading, setUser } from "@/redux/authSlice";
 import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
 
 const Login = () => {
   const [input, setInput] = useState({
@@ -18,7 +19,7 @@ const Login = () => {
     password: "",
     role: "",
   });
-  const { loading } = useSelector((store) => store.auth);
+  const { loading,user } = useSelector((store) => store.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const changeEventHandler = (e) => {
@@ -38,7 +39,7 @@ const Login = () => {
       });
 
       if (res.data.success) {
-        dispatch(setUser(res.data.user))
+        dispatch(setUser(res.data.user));
         navigate("/");
         toast.success(res.data.message);
       }
@@ -49,6 +50,11 @@ const Login = () => {
       dispatch(setLoading(false));
     }
   };
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, []);
   return (
     <div>
       <Navbar />
@@ -107,7 +113,7 @@ const Login = () => {
             </RadioGroup>
           </div>
           {loading ? (
-            <Button className='w-full my-4'>
+            <Button className="w-full my-4">
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Please wait
             </Button>
