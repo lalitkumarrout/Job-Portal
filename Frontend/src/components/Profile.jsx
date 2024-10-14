@@ -6,7 +6,7 @@ import { Contact, Mail, Pen } from "lucide-react";
 import { Badge } from "./ui/badge";
 import { Label } from "./ui/label";
 import AppliedJobTable from "./AppliedJobTable";
-const UpdateProfileDialog = React.lazy(() => import("./UpdateProfileDialog"));
+import UpdateProfileDialog from "./UpdateProfileDialog";
 import { useSelector } from "react-redux";
 import useGetAppliedJobs from "@/hooks/useGetAppliedJobs";
 
@@ -86,9 +86,7 @@ const Profile = () => {
         <AppliedJobTable />
       </div>
 
-      <React.Suspense fallback={<div>Loading...</div>}>
-        <UpdateProfileDialog open={open} setOpen={setOpen} />
-      </React.Suspense>
+      <UpdateProfileDialog open={open} setOpen={setOpen} />
     </div>
   );
 };
