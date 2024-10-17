@@ -13,7 +13,7 @@ import path from "path"
 dotenv.config({});
 const app=express();
 
-const _dirname=path.resolve();
+//const _dirname=path.resolve();
 
  
 //middleware
@@ -36,10 +36,10 @@ app.use('/api/v1/company',companyRoute);
 app.use('/api/v1/job',jobRoute)
 app.use('/api/v1/application',applicationRoute);
 
-app.use(express.static(path.join(_dirname,"/Frontend/dist")))
-app.get('*',(_,res)=>{
-    res.sendFile(path.resolve(_dirname,"Frontend","dist","index.html"));
-})
+// app.use(express.static(path.join(_dirname,"/Frontend/dist")))
+// app.get('*',(_,res)=>{
+//     res.sendFile(path.resolve(_dirname,"Frontend","dist","index.html"));
+// })
 
 //"http://localhost:8000/api/v1/user/register"
 
